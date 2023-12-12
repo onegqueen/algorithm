@@ -7,10 +7,12 @@ def union(u,v):
     parent[u]=v
 
 def find(u):
-    while(u!=parent[u]):
-        u=parent[u]
-        
-    return u
+    if(parent[u] == u):
+        return u
+        #경로압축
+    else:
+        parent[u]=find(parent[u])
+        return parent[u]
 
 g=int(sys.stdin.readline())
 p=int(sys.stdin.readline())
