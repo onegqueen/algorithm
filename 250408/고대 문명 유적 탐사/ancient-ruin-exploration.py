@@ -108,7 +108,7 @@ def turn():
 
 
 
-                res.sort(key=lambda x : x[1] -x[0])
+                res.sort(key=lambda x : (x[1] , -x[0]))
                 if len(res)>cnt:
                     cnt = len(res)
                     get = res
@@ -118,13 +118,17 @@ def turn():
 
     while get:
         board = res_board
-
-        for g in get:
-            if idx >= len(peice):
-                return 0
-                
+        # print(get)
+        # for x in range(5):
+        #     print(board[x])
+        
+        # print("V")
+        for g in get:                
             board[g[0]][g[1]]=peice[idx]
             idx+=1
+        
+        # for x in range(5):
+        #     print(board[x])
         
         
         res = []
@@ -137,11 +141,10 @@ def turn():
                 visited = [[False for x in range(5)]for y in range(5)]
                 res+=bfs((a,b),visited,board)
 
-        res.sort(key=lambda x : x[1] -x[0])
+        res.sort(key=lambda x : (x[1] , -x[0]))
         get = res
         ans+=len(get)
         
-    board = res_board
     return ans
 
 
@@ -155,7 +158,8 @@ for i in range(k):
     print(tmp,end = " ")
 
 print()
-        
+
+#1 1 5 3 6 1 2 // 2 7 4 1 1 5 2 6 5 7 2 3 7 7 3 6 3 2 3 5 4 7 3
 
 
 
