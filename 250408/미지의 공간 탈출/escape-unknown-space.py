@@ -80,7 +80,7 @@ def dfs_wall(start,visited):
     global wall_exit
     res = 1e9
     dq = deque()
-    dq.append((start,1))
+    dq.append((start,0))
 
     while dq:
         node = dq.popleft()
@@ -117,7 +117,7 @@ def dfs_wall(start,visited):
                     y = M-1
                 elif x == M:
                     if wall_pos[1]+M<N and mizi[wall_pos[0]+(M-1-y)][wall_pos[1]+M] == 0:
-                        res = min(res,t)
+                        res = min(res,t+1)
                     continue  
                 if y == -1:
                     z = 2
@@ -132,7 +132,7 @@ def dfs_wall(start,visited):
                     x = M-1
                 elif x == M:
                     if wall_pos[0]+M<N and mizi[wall_pos[0]+M][wall_pos[1]+y] == 0:
-                        res = min(res,t)
+                        res = min(res,t+1)
                     continue 
                 if y == -1:
                     z = 1
@@ -149,7 +149,7 @@ def dfs_wall(start,visited):
                     
                 elif x == M:
                     if wall_pos[1]-1 > 0 and mizi[wall_pos[0]+y][wall_pos[1]-1] == 0:
-                        res = min(res,t)
+                        res = min(res,t+1)
                     continue
                     
                 if y == -1:
@@ -166,7 +166,7 @@ def dfs_wall(start,visited):
                     x = 0
                 elif x == M:
                     if wall_pos[0]-1>0 and mizi[wall_pos[0]-1][wall_pos[1]+(M-1-y)] == 0:
-                        res = min(res,t)
+                        res = min(res,t+1)
                     continue
                     
                 if y == -1:
@@ -178,15 +178,15 @@ def dfs_wall(start,visited):
                     y = 0
                 
 
-            if visited[z][x][y]>t and wall[z][x][y] == 0:
-                visited[z][x][y]=t
+            if visited[z][x][y]>t+1 and wall[z][x][y] == 0:
+                visited[z][x][y]=t+1
                 dq.append(((z,(x,y)),t+1))
     
     return res
 
 def dfs_mizi(node,t,target_board,visited):
     if target_board[node[0]][node[1]] == 4:
-        return t-1
+        return t
 
     res = 1e9
 
@@ -198,7 +198,7 @@ def dfs_mizi(node,t,target_board,visited):
             continue
         
         visited[x][y] = True
-        res = min(res,dfs_mizi((x,y),t+1,phenom(target_board,t+1),visited))
+        res = min(res,dfs_mizi((x,y),t+1,phenom(target_board,t+2),visited))
         visited[x][y] = False
     
     return res
@@ -213,7 +213,7 @@ else:
         mizi = phenom(mizi,i+1)
 
     mizi_visited = [[False for i in range(N)]for j in range(N)]
-    res = dfs_mizi(wall_exit,tmp+1,phenom(mizi,tmp+1),mizi_visited)
+    res = dfs_mizi(wall_exit,tmp,phenom(mizi,tmp+1),mizi_visited)
 
     if res == 1e9:
         print(-1)
