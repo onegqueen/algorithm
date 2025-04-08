@@ -1,3 +1,5 @@
+from collections import deque
+
 N,M,F = map(int,input().split())
 
 moves=[[0,1],[0,-1],[1,0],[-1,0]]
@@ -74,108 +76,111 @@ def phenom(target_board,t):
 
 
 ## 시간의벽 탈출
-def dfs_wall(now,t,target_board,visited):
+def dfs_wall(start,visited):
     global wall_exit
     res = 1e9
+    dq = deque()
+    dq.append((start,1))
 
-    for move in moves:
-        new = copy_board(target_board)
-        x = now[1][0]+move[0]
-        y = now[1][1]+move[1]
+    while dq:
+        node = dq.popleft()
+        now = node[0]
+        t = node[1]
 
-        z = now[0]
+        for move in moves:
+            x = now[1][0]+move[0]
+            y = now[1][1]+move[1]
+            z = now[0]
 
-        if now[0] == 4:
-            if x == -1:
-                z = 3
-                x = 0
-                y = M-1-y
-            elif x == M:
-                z = 2
-                x = 0
-            
-            if y == -1:
-                z = 1
-                y = x
-                x = 0
-            elif y == M:
-                z = 0
-                y = x
-                x = 0
-        
-        elif now [0]==0:
-            if x == -1:
-                z = 4
-                x = M-1-y
-                y = M-1
-            elif x == M:
-                if wall_pos[1]+M<N and new[wall_pos[0]+(M-1-y)][wall_pos[1]+M] == 0:
-                    res = min(res,t)
-                continue  
-            if y == -1:
-                z = 2
-                y = M-1
-            elif y == M:
-                z = 3
-                y = 0
-        
-        elif now [0] == 2:
-            if x == -1:
-                z = 4
-                x = M-1
-            elif x == M:
-                if wall_pos[0]+M<N and new[wall_pos[0]+M][wall_pos[1]+y] == 0:
-                    res = min(res,t)
-                continue 
-            if y == -1:
-                z = 1
-                y = M-1
-            elif y == M:
-                z = 0
-                y = 0
-        
-        elif now [0] == 1:
-            if x == -1:
-                z = 4
-                x = y
-                y = 0
+            if now[0] == 4:
+                if x == -1:
+                    z = 3
+                    x = 0
+                    y = M-1-y
+                elif x == M:
+                    z = 2
+                    x = 0
                 
-            elif x == M:
-                if wall_pos[1]-1 > 0 and new[wall_pos[0]+y][wall_pos[1]-1] == 0:
-                    res = min(res,t)
-                continue
-                 
-            if y == -1:
-                z = 3
-                y = M-1
-            elif y == M:
-                z = 2
-                y = 0
-        
-        elif now [0] == 3:
-            if x == -1:
-                z = 4
-                y = M-1-x
-                x = 0
-            elif x == M:
-                if wall_pos[0]-1>0 and new[wall_pos[0]-1][wall_pos[1]+(M-1-y)] == 0:
-                    res = min(res,t)
-                continue
-                 
-            if y == -1:
-                z=0
-                y=M-1
-
-            elif y == M:
-                z = 1
-                y = 0
+                if y == -1:
+                    z = 1
+                    y = x
+                    x = 0
+                elif y == M:
+                    z = 0
+                    y = x
+                    x = 0
             
+            elif now [0]==0:
+                if x == -1:
+                    z = 4
+                    x = M-1-y
+                    y = M-1
+                elif x == M:
+                    if wall_pos[1]+M<N and mizi[wall_pos[0]+(M-1-y)][wall_pos[1]+M] == 0:
+                        res = min(res,t)
+                    continue  
+                if y == -1:
+                    z = 2
+                    y = M-1
+                elif y == M:
+                    z = 3
+                    y = 0
+            
+            elif now [0] == 2:
+                if x == -1:
+                    z = 4
+                    x = M-1
+                elif x == M:
+                    if wall_pos[0]+M<N and mizi[wall_pos[0]+M][wall_pos[1]+y] == 0:
+                        res = min(res,t)
+                    continue 
+                if y == -1:
+                    z = 1
+                    y = M-1
+                elif y == M:
+                    z = 0
+                    y = 0
+            
+            elif now [0] == 1:
+                if x == -1:
+                    z = 4
+                    x = y
+                    y = 0
+                    
+                elif x == M:
+                    if wall_pos[1]-1 > 0 and mizi[wall_pos[0]+y][wall_pos[1]-1] == 0:
+                        res = min(res,t)
+                    continue
+                    
+                if y == -1:
+                    z = 3
+                    y = M-1
+                elif y == M:
+                    z = 2
+                    y = 0
+            
+            elif now [0] == 3:
+                if x == -1:
+                    z = 4
+                    y = M-1-x
+                    x = 0
+                elif x == M:
+                    if wall_pos[0]-1>0 and mizi[wall_pos[0]-1][wall_pos[1]+(M-1-y)] == 0:
+                        res = min(res,t)
+                    continue
+                    
+                if y == -1:
+                    z=0
+                    y=M-1
 
-        if not visited[z][x][y] and wall[z][x][y] == 0:
-            visited[z][x][y] = True
-            res = min(res,dfs_wall((z,(x,y)),t+1,target_board,visited))
-            visited[z][x][y] = False
+                elif y == M:
+                    z = 1
+                    y = 0
+                
 
+            if visited[z][x][y]>t and wall[z][x][y] == 0:
+                visited[z][x][y]=t
+                dq.append(((z,(x,y)),t+1))
     
     return res
 
@@ -198,8 +203,8 @@ def dfs_mizi(node,t,target_board,visited):
     
     return res
 
-wall_visited = [[[False for i in range(M)]for j in range(M)]for x in range(5)]
-tmp = dfs_wall((4,mcn_pos),1,phenom(mizi,1),wall_visited)
+wall_visited = [[[1e9 for i in range(M)]for j in range(M)]for x in range(5)]
+tmp = dfs_wall((4,mcn_pos),wall_visited)
 if tmp == 1e9:
     print(-1)
 
