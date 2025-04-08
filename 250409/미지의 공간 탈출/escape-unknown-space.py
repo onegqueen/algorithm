@@ -178,7 +178,7 @@ def dfs_wall(start,visited):
                     y = 0
                 
 
-            if visited[z][x][y]>t and wall[z][x][y] == 0:
+            if visited[z][x][y]>t and wall[z][x][y] != 1:
                 visited[z][x][y]=t
                 dq.append(((z,(x,y)),t+1))
     
