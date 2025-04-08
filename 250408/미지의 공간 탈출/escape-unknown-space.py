@@ -58,7 +58,7 @@ def phenom(target_board,t):
         x = a[0]
         y = a[1]
         if t%a[3]==0:
-            while new[x][y]==5:
+            while x>=0 and x<N and y>=0 and y<N and new[x][y]==5:
                 if a[2] == 0:
                     y+=1
                 elif a[2]==1:
