@@ -52,12 +52,12 @@ def bfs(start,visited,target_board):
     else:
         return []
 
-def get_board(t_board):
+def get_board():
     new = []
     for i in range(5):
         tmp = []
         for j in range(5):
-            tmp.append(t_board[i][j])
+            tmp.append(board[i][j])
         new.append(tmp)
     return new
 
@@ -74,57 +74,74 @@ def swap(base,target,center):
 
 
 def turn():
-    res_board = get_board(board)
+    global board
+
+    res_board = []
     idx = 0
     flag = True
+
+    cnt = 0
+    get = []
     
     ans = 0
-    while flag:
-        get = []
-        cnt = 0
-        for s in range(3):
-            for i in range(1,4):
-                for j in range(1,4):
-                    base_board = get_board(res_board)
-                    tmp = spin(j,i,s+1)
-                    new_board=swap(base_board,tmp,(j,i))
+    for s in range(3):
+        for i in range(1,4):
+            for j in range(1,4):
+                base_board = get_board()
+                tmp = spin(j,i,s+1)
+                new_board=swap(base_board,tmp,(j,i))
 
-                    res = []
+                res = []
 
-                    for a in range(5):
-                        for b in range(5):
-                            if (a,b) in res:
-                                continue
+                for a in range(5):
+                    for b in range(5):
+                        if (a,b) in res:
+                            continue
 
-                            visited = [[False for x in range(5)]for y in range(5)]
-                            res+=bfs((a,b),visited,new_board)
+                        visited = [[False for x in range(5)]for y in range(5)]
+                        res+=bfs((a,b),visited,new_board)
 
 
 
-                    res.sort(key=lambda x : x[1] -x[0])
-                    if len(res)>cnt:
-                        cnt = len(res)
-                        get = res
-                        res_board = new_board
+                res.sort(key=lambda x : x[1] -x[0])
+                if len(res)>cnt:
+                    cnt = len(res)
+                    get = res
+                    res_board = new_board
 
-        ans += cnt
-        if len(get)==0:
-            flag = False
+    ans += cnt
 
+    while get:
         for g in get:
             res_board[g[0]][g[1]] = peice[idx]
             idx+=1
+        
+        res = []
+
+        for a in range(5):
+            for b in range(5):
+                if (a,b) in res:
+                    continue
+
+                visited = [[False for x in range(5)]for y in range(5)]
+                res+=bfs((a,b),visited,res_board)
+
+        res.sort(key=lambda x : x[1] -x[0])
+        get = res
+        ans+=len(get)
     
+    board = res_board
     return ans
 
    
 for _ in range(k):
     tmp = turn()
-    if tmp!=0:
-        print(tmp,end = "")
-    else:
-        print("")
-        
+    if tmp == 0:
+        break
+    
+    print(tmp,end = " ")
+
+print()
         
 
 
