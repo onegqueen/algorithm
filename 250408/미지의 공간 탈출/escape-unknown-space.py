@@ -77,7 +77,6 @@ def phenom(target_board,t):
 def dfs_wall(now,t,target_board,visited):
     global wall_exit
     res = 1e9
-    # print("wall",now)
 
     for move in moves:
         new = copy_board(target_board)
@@ -176,6 +175,7 @@ def dfs_wall(now,t,target_board,visited):
             visited[z][x][y] = True
             res = min(res,dfs_wall((z,(x,y)),t+1,phenom(new,t+1),visited))
             visited[z][x][y] = False
+
     
     return res
 
@@ -200,16 +200,20 @@ def dfs_mizi(node,t,target_board,visited):
 
 wall_visited = [[[False for i in range(M)]for j in range(M)]for x in range(5)]
 tmp = dfs_wall((4,mcn_pos),1,phenom(mizi,1),wall_visited)
-for i in range(tmp):
-    mizi = phenom(mizi,i+1)
-
-mizi_visited = [[False for i in range(N)]for j in range(N)]
-res = dfs_mizi(wall_exit,tmp+1,phenom(mizi,tmp+1),mizi_visited)
-
-if res == 1e9:
+if tmp == 1e9:
     print(-1)
+
 else:
-    print(res)
+    for i in range(tmp):
+        mizi = phenom(mizi,i+1)
+
+    mizi_visited = [[False for i in range(N)]for j in range(N)]
+    res = dfs_mizi(wall_exit,tmp+1,phenom(mizi,tmp+1),mizi_visited)
+
+    if res == 1e9:
+        print(-1)
+    else:
+        print(res)
 
             
 
