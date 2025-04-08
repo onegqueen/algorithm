@@ -173,7 +173,7 @@ def dfs_wall(now,t,target_board,visited):
 
         if not visited[z][x][y] and wall[z][x][y] == 0:
             visited[z][x][y] = True
-            res = min(res,dfs_wall((z,(x,y)),t+1,phenom(new,t+1),visited))
+            res = min(res,dfs_wall((z,(x,y)),t+1,target_board,visited))
             visited[z][x][y] = False
 
     
