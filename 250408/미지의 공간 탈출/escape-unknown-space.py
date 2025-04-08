@@ -210,7 +210,7 @@ if tmp == 1e9:
     print(-1)
 
 else:
-    for i in range(tmp):
+    for i in range(tmp+1):
         mizi = phenom(mizi,i+1)
 
     tmp+=1
