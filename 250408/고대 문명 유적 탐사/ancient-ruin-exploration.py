@@ -118,13 +118,11 @@ def turn():
 
     while get:
         board = res_board
-        # print(get,idx)
-        # for x in range(5):
-        #     print(board[x])
 
         for g in get:
             if idx >= len(peice):
                 return 0
+                
             board[g[0]][g[1]]=peice[idx]
             idx+=1
         
@@ -142,15 +140,15 @@ def turn():
         res.sort(key=lambda x : x[1] -x[0])
         get = res
         ans+=len(get)
-
-    
+        
+    board = res_board
     return ans
 
 
 idx = 0
 for i in range(k):
     tmp = turn()
-    
+
     if tmp == 0:
         break
     
