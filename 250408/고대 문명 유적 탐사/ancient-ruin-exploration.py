@@ -121,8 +121,7 @@ def turn():
 
         for g in get:
             if idx >= len(peice):
-                print("here")
-                return
+                return 0
             res_board[g[0]][g[1]] = peice[idx]
             idx+=1
         
