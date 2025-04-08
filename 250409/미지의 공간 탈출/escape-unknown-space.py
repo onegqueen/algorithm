@@ -101,7 +101,7 @@ def dfs_wall(start,visited):
                     z = 2
                     x = 0
                 
-                if y == -1:
+                elif y == -1:
                     z = 1
                     y = x
                     x = 0
@@ -119,7 +119,7 @@ def dfs_wall(start,visited):
                     if wall_pos[1]+M<N and mizi[wall_pos[0]+(M-1-y)][wall_pos[1]+M] == 0:
                         res = min(res,t+1)
                     continue  
-                if y == -1:
+                elif y == -1:
                     z = 2
                     y = M-1
                 elif y == M:
@@ -134,7 +134,7 @@ def dfs_wall(start,visited):
                     if wall_pos[0]+M<N and mizi[wall_pos[0]+M][wall_pos[1]+y] == 0:
                         res = min(res,t+1)
                     continue 
-                if y == -1:
+                elif y == -1:
                     z = 1
                     y = M-1
                 elif y == M:
@@ -152,7 +152,7 @@ def dfs_wall(start,visited):
                         res = min(res,t+1)
                     continue
                     
-                if y == -1:
+                elif y == -1:
                     z = 3
                     y = M-1
                 elif y == M:
@@ -162,14 +162,14 @@ def dfs_wall(start,visited):
             elif now [0] == 3:
                 if x == -1:
                     z = 4
-                    y = M-1-x
+                    y = M-1-y
                     x = 0
                 elif x == M:
                     if wall_pos[0]-1>0 and mizi[wall_pos[0]-1][wall_pos[1]+(M-1-y)] == 0:
                         res = min(res,t+1)
                     continue
                     
-                if y == -1:
+                elif y == -1:
                     z=0
                     y=M-1
 
@@ -177,9 +177,8 @@ def dfs_wall(start,visited):
                     z = 1
                     y = 0
                 
-
-            if visited[z][x][y]>t and wall[z][x][y] != 1:
-                visited[z][x][y]=t
+            if visited[z][x][y]>=t+1 and wall[z][x][y] == 0:
+                visited[z][x][y]=t+1
                 dq.append(((z,(x,y)),t+1))
     
     return res
