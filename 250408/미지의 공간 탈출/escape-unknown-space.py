@@ -180,7 +180,6 @@ def dfs_wall(now,t,target_board,visited):
     return res
 
 def dfs_mizi(node,t,target_board,visited):
-    #print("mizi",node,t)
     if target_board[node[0]][node[1]] == 4:
         return t-1
 
@@ -205,7 +204,12 @@ for i in range(tmp):
     mizi = phenom(mizi,i+1)
 
 mizi_visited = [[False for i in range(N)]for j in range(N)]
-print(dfs_mizi(wall_exit,tmp+1,phenom(mizi,tmp+1),mizi_visited))
+res = dfs_mizi(wall_exit,tmp+1,phenom(mizi,tmp+1),mizi_visited)
+
+if res == 1e9:
+    print(-1)
+else:
+    print(res)
 
             
 
