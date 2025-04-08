@@ -54,13 +54,14 @@ def bfs(start,visited,target_board):
 
 def get_board():
     global board
-    
+
     new = []
     for i in range(5):
         tmp = []
         for j in range(5):
             tmp.append(board[i][j])
         new.append(tmp)
+
     return new
 
 def swap(base,target,center):
@@ -76,10 +77,10 @@ def swap(base,target,center):
 
 
 def turn():
+    global idx
     global board
 
     res_board = []
-    idx = 0
     flag = True
 
     cnt = 0
@@ -135,7 +136,8 @@ def turn():
     board = res_board
     return ans
 
-   
+
+idx = 0
 for _ in range(k):
     tmp = turn()
     if tmp == 0:
