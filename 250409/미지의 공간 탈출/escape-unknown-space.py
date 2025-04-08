@@ -178,15 +178,14 @@ def dfs_wall(start,visited):
                     y = 0
                 
 
-            if visited[z][x][y]>t+1 and wall[z][x][y] == 0:
-                visited[z][x][y]=t+1
+            if visited[z][x][y]>t and wall[z][x][y] == 0:
+                visited[z][x][y]=t
                 dq.append(((z,(x,y)),t+1))
     
     return res
 
 def dfs_mizi(node,t,target_board,visited):
     res = 1e9
-
     dq = deque()
     dq.append([node,t,target_board])
 
@@ -220,7 +219,7 @@ if tmp == 1e9:
     print(-1)
 
 else:
-    for i in range(tmp):
+    for i in range(tmp+1):
         mizi = phenom(mizi,i+1)
 
     mizi_visited = [[False for i in range(N)]for j in range(N)]
