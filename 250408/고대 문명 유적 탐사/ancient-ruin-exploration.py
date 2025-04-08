@@ -8,6 +8,8 @@ for i in range(5):
 peice = list(map(int,sys.stdin.readline().split()))
 
 def spin(x,y,s):
+    global board
+    
     target = []
     for i in range(x-1,x+2):
         tmp = []
