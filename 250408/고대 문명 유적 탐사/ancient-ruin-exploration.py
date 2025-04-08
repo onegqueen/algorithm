@@ -9,7 +9,7 @@ peice = list(map(int,sys.stdin.readline().split()))
 
 def spin(x,y,s):
     global board
-    
+
     target = []
     for i in range(x-1,x+2):
         tmp = []
@@ -117,14 +117,15 @@ def turn():
     ans += cnt
 
     while get:
+        board = res_board
         # print(get,idx)
         # for x in range(5):
-        #     print(res_board[x])
+        #     print(board[x])
 
         for g in get:
             if idx >= len(peice):
                 return 0
-            res_board[g[0]][g[1]] = peice[idx]
+            board[g[0]][g[1]]=peice[idx]
             idx+=1
         
         
@@ -136,20 +137,20 @@ def turn():
                     continue
 
                 visited = [[False for x in range(5)]for y in range(5)]
-                res+=bfs((a,b),visited,res_board)
+                res+=bfs((a,b),visited,board)
 
         res.sort(key=lambda x : x[1] -x[0])
         get = res
         ans+=len(get)
 
     
-    board = res_board
     return ans
 
 
 idx = 0
 for i in range(k):
     tmp = turn()
+    
     if tmp == 0:
         break
     
