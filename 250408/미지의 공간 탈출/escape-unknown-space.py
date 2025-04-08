@@ -107,7 +107,7 @@ def dfs_wall(start,visited):
                     x = 0
                 elif y == M:
                     z = 0
-                    y = x
+                    y = M-1-x
                     x = 0
             
             elif now [0]==0:
