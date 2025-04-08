@@ -53,6 +53,8 @@ def bfs(start,visited,target_board):
         return []
 
 def get_board():
+    global board
+    
     new = []
     for i in range(5):
         tmp = []
