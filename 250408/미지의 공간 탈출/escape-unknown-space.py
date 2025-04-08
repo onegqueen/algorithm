@@ -189,6 +189,7 @@ def dfs_mizi(node,t,target_board,visited):
         return t-1
 
     res = 1e9
+    t+=1
 
     for move in moves:
         x = node[0]+move[0]
@@ -198,7 +199,7 @@ def dfs_mizi(node,t,target_board,visited):
             continue
         
         visited[x][y] = True
-        res = min(res,dfs_mizi((x,y),t+1,phenom(target_board,t+1),visited))
+        res = min(res,dfs_mizi((x,y),t,phenom(target_board,t+1),visited))
         visited[x][y] = False
     
     return res
@@ -212,8 +213,9 @@ else:
     for i in range(tmp):
         mizi = phenom(mizi,i+1)
 
+    tmp+=1
     mizi_visited = [[False for i in range(N)]for j in range(N)]
-    res = dfs_mizi(wall_exit,tmp+1,phenom(mizi,tmp+1),mizi_visited)
+    res = dfs_mizi(wall_exit,tmp,phenom(mizi,tmp+1),mizi_visited)
 
     if res == 1e9:
         print(-1)
