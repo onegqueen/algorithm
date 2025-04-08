@@ -198,7 +198,7 @@ def dfs_mizi(node,t,target_board,visited):
             continue
         
         visited[x][y] = True
-        res = min(res,dfs_mizi((x,y),t+1,phenom(target_board,t+2),visited))
+        res = min(res,dfs_mizi((x,y),t+1,phenom(target_board,t+1),visited))
         visited[x][y] = False
     
     return res
