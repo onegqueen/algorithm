@@ -115,7 +115,6 @@ def bfs(start,visited,vis_id):
     res = 0
     while dq:
         now = dq.popleft()
-        visited[now[0]][now[1]]=vis_id
         target = abs(forest[now[0]][now[1]])
 
         if now[0]-2> res:
@@ -126,6 +125,7 @@ def bfs(start,visited,vis_id):
             y = now[1]+m[1]
 
             if (x>0 and x<=R+2 and y>0 and y<C) and forest[x][y]!=0 and ((abs(forest[x][y])==target) or forest[now[0]][now[1]]==-target) and visited[x][y]!=vis_id:
+                visited[now[0]][now[1]]=vis_id
                 dq.append((x,y))
             
     
