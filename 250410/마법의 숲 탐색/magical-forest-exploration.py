@@ -51,63 +51,24 @@ def move(pos,exit_d):
         s = (pos[0]+1,pos[1])
         w = (pos[0],pos[1]-1)
         n = (pos[0]-1,pos[1])
-
-        exit = (pos[0]+direction[exit_d][0],pos[1]+direction[exit_d][1])
-        #print(pos,exit)
-
+        
         if forest[w[0]+1][w[1]] == 0 and forest[s[0]+1][s[1]]==0 and forest[e[0]+1][e[1]]==0:
-            for s in spot :
-                forest[pos[0]+s[0]+1][pos[1]+s[1]] = forest[pos[0]+s[0]][pos[1]+s[1]]
-                forest[pos[0]+s[0]][pos[1]+s[1]] = 0
-            exit = (exit[0]+1,exit[1])
             pos = (pos[0]+1,pos[1])
         
         #서쪽이동 
         elif w[1]-1>=0 and forest[n[0]][n[1]-1] == 0 and forest[w[0]][w[1]-1] == 0 and forest[s[0]][s[1]-1]==0 and forest[w[0]+1][w[1]-1]==0 and forest[s[0]+1][s[1]-1]==0: 
-            forest[exit[0]][exit[1]] = forest[pos[0]][pos[1]]
-            exit_d = (exit_d-1)%4
-            exit = (pos[0]+direction[exit_d][0],pos[1]+direction[exit_d][1])
-            forest[exit[0]][exit[1]] = -forest[pos[0]][pos[1]]
-            pos = spin(3,pos)
-            exit = (exit[0],exit[1]-1)
-
-            e = (pos[0],pos[1]+1)
-            s = (pos[0]+1,pos[1])
-            w = (pos[0],pos[1]-1)
-            n = (pos[0]-1,pos[1])
+            pos = (pos[0]+1,pos[1]-1)
+            exit_d=(exit_d-1)%4
             
-            for s in spot :
-                forest[pos[0]+s[0]+1][pos[1]+s[1]] = forest[pos[0]+s[0]][pos[1]+s[1]]
-                forest[pos[0]+s[0]][pos[1]+s[1]] = 0
-            exit = (exit[0]+1,exit[1])
-            pos = (pos[0]+1,pos[1])
-        
         #동쪽이동
         elif e[1]+1<C and forest[n[0]][n[1]+1] == 0 and forest[e[0]][e[1]+1] == 0 and forest[s[0]][s[1]+1]==0 and forest[s[0]+1][s[1]+1]==0 and forest[e[0]+1][e[1]+1]==0:
-            
-            forest[exit[0]][exit[1]] = forest[pos[0]][pos[1]]
-            exit_d = (exit_d+1)%4
-            exit = (pos[0]+direction[exit_d][0],pos[1]+direction[exit_d][1])
-            forest[exit[0]][exit[1]] = -forest[pos[0]][pos[1]]
-            pos = spin(1,pos)
-            exit = (exit[0],exit[1]+1)
-
-            e = (pos[0],pos[1]+1)
-            s = (pos[0]+1,pos[1])
-            w = (pos[0],pos[1]-1)
-            n = (pos[0]-1,pos[1])
-            
-            
-            for s in spot :
-                forest[pos[0]+s[0]+1][pos[1]+s[1]] = forest[pos[0]+s[0]][pos[1]+s[1]]
-                forest[pos[0]+s[0]][pos[1]+s[1]] = 0
-            exit = (exit[0]+1,exit[1])
-            pos = (pos[0]+1,pos[1])
+            pos = (pos[0]+1,pos[1]+1)
+            exit_d=(exit_d+1)%4
 
         else:
             break
 
-    return (pos,exit)
+    return (pos,exit_d)
 
 def bfs(start,visited,vis_id):
     dq = deque()
@@ -136,30 +97,19 @@ visited_id = 1
 visited = [[0 for i in range(C)]for j in range(R+3)]
 for g in golams:
     pos = (1,g[0]-1)
-    exit = (pos[0]+direction[g[1]][0],pos[1]+direction[g[1]][1])
-    flag = True
-    for s in spot:
-        if forest[pos[0]+s[0]][pos[1]+s[1]]==0:
-            forest[pos[0]+s[0]][pos[1]+s[1]] = idx
-        else:
-            flag = False
-    if not flag:
-        forest = [[0 for i in range(C)]for j in range(R+3)]
-        idx+=1
-        continue
-
-    
-    forest[exit[0]][exit[1]] = -forest[pos[0]][pos[1]]
 
     pos,exit = move(pos,g[1])
-   
     if pos[0]-1<=2:
         forest = [[0 for i in range(C)]for j in range(R+3)]
         idx+=1
         continue
 
-    
-    
+    exit = (pos[0]+direction[exit][0],pos[1]+direction[exit][1])
+    for s in spot:
+        if forest[pos[0]+s[0]][pos[1]+s[1]]==0:
+            forest[pos[0]+s[0]][pos[1]+s[1]] = idx
+    forest[exit[0]][exit[1]] = -idx
+
     ans+=bfs(pos,visited,visited_id)
     
     idx+=1
