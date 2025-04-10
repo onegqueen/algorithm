@@ -9,7 +9,7 @@ for _ in range(K):
     c,d = map(int,input().split())
     golams.append((c,d))
 
-forest = [[0 for i in range(C)]for j in range(R+2)]
+forest = [[0 for i in range(C)]for j in range(R+3)]
 
 def spin(dr,pos):
     e = (pos[0],pos[1]+1)
@@ -46,7 +46,7 @@ def spin(dr,pos):
 def move(pos,exit_d):
     prev = 5
 
-    while pos[0]+1<R+1 :
+    while pos[0]+1<R+2 :
         e = (pos[0],pos[1]+1)
         s = (pos[0]+1,pos[1])
         w = (pos[0],pos[1]-1)
@@ -63,7 +63,7 @@ def move(pos,exit_d):
             pos = (pos[0]+1,pos[1])
         
         #서쪽이동 
-        elif w[1]-1>0 and forest[n[0]][n[1]-1] == 0 and forest[w[0]][w[1]-1] == 0 and forest[s[0]][s[1]-1]==0 and forest[w[0]+1][w[1]-1]==0 and forest[s[0]+1][s[1]-1]==0: 
+        elif w[1]-1>=0 and forest[n[0]][n[1]-1] == 0 and forest[w[0]][w[1]-1] == 0 and forest[s[0]][s[1]-1]==0 and forest[w[0]+1][w[1]-1]==0 and forest[s[0]+1][s[1]-1]==0: 
             forest[exit[0]][exit[1]] = forest[pos[0]][pos[1]]
             exit_d = (exit_d-1)%4
             exit = (pos[0]+direction[exit_d][0],pos[1]+direction[exit_d][1])
@@ -118,14 +118,14 @@ def bfs(start,visited):
         visited[now[0]][now[1]]=True
         target = abs(forest[now[0]][now[1]])
 
-        if now[0]-1> res:
-            res = now[0]-1
+        if now[0]-2> res:
+            res = now[0]-2
 
         for m in direction:
             x = now[0]+m[0]
             y = now[1]+m[1]
 
-            if (x>0 and x<=R+1 and y>0 and y<C) and forest[x][y]!=0 and ((abs(forest[x][y])==target) or forest[now[0]][now[1]]==-target) and not visited[x][y]:
+            if (x>0 and x<=R+2 and y>0 and y<C) and forest[x][y]!=0 and ((abs(forest[x][y])==target) or forest[now[0]][now[1]]==-target) and not visited[x][y]:
                 dq.append((x,y))
             
     
@@ -137,21 +137,35 @@ idx = 1
 for g in golams:
     pos = (1,g[0]-1)
     exit = (pos[0]+direction[g[1]][0],pos[1]+direction[g[1]][1])
+    flag = True
     for s in spot:
-        forest[pos[0]+s[0]][pos[1]+s[1]] = idx
-    forest[exit[0]][exit[1]] = -forest[pos[0]][pos[1]]
-
-    pos,exit = move(pos,g[1])
-   
-    if pos[0]==1:
-        forest = [[0 for i in range(C)]for j in range(R+2)]
+        if forest[pos[0]+s[0]][pos[1]+s[1]]==0:
+            forest[pos[0]+s[0]][pos[1]+s[1]] = idx
+        else:
+            flag = False
+    if not flag:
+        forest = [[0 for i in range(C)]for j in range(R+3)]
         idx+=1
         continue
 
     
-    visited = [[False for i in range(C)]for j in range(R+2)]
+    forest[exit[0]][exit[1]] = -forest[pos[0]][pos[1]]
+
+    pos,exit = move(pos,g[1])
+   
+    if pos[0]-1<=2:
+        forest = [[0 for i in range(C)]for j in range(R+3)]
+        idx+=1
+        continue
+
+    
+    visited = [[False for i in range(C)]for j in range(R+3)]
     ans+=bfs(pos,visited)
     
     idx+=1
 
 print(ans)
+
+
+
+
