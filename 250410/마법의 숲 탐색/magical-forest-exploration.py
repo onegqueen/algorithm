@@ -109,13 +109,13 @@ def move(pos,exit_d):
 
     return (pos,exit)
 
-def bfs(start,visited):
+def bfs(start,visited,vis_id):
     dq = deque()
     dq.append(start)
     res = 0
     while dq:
         now = dq.popleft()
-        visited[now[0]][now[1]]=True
+        visited[now[0]][now[1]]=vis_id
         target = abs(forest[now[0]][now[1]])
 
         if now[0]-2> res:
@@ -125,7 +125,7 @@ def bfs(start,visited):
             x = now[0]+m[0]
             y = now[1]+m[1]
 
-            if (x>0 and x<=R+2 and y>0 and y<C) and forest[x][y]!=0 and ((abs(forest[x][y])==target) or forest[now[0]][now[1]]==-target) and not visited[x][y]:
+            if (x>0 and x<=R+2 and y>0 and y<C) and forest[x][y]!=0 and ((abs(forest[x][y])==target) or forest[now[0]][now[1]]==-target) and visited[x][y]!=vis_id:
                 dq.append((x,y))
             
     
@@ -134,6 +134,8 @@ def bfs(start,visited):
 
 ans = 0
 idx = 1
+visited_id = 1
+visited = [[0 for i in range(C)]for j in range(R+3)]
 for g in golams:
     pos = (1,g[0]-1)
     exit = (pos[0]+direction[g[1]][0],pos[1]+direction[g[1]][1])
@@ -159,12 +161,14 @@ for g in golams:
         continue
 
     
-    visited = [[False for i in range(C)]for j in range(R+3)]
-    ans+=bfs(pos,visited)
+    
+    ans+=bfs(pos,visited,visited_id)
     
     idx+=1
+    visited_id+=1
 
 print(ans)
+
 
 
 
