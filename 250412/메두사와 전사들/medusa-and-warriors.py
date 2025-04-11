@@ -199,7 +199,7 @@ def get_hide(pos,target,vis):
     return res
     
     
-path = get_path(home)[1:-1]
+path = get_path(home)
 
 for i in range(N):
     for j in range(N):
@@ -207,13 +207,14 @@ for i in range(N):
             board[i][j]=0
         if (i,j) in fight:
             board[i][j] = board[i][j]-1
-    
+ 
 
 
 if not path :
     print(-1)
 
 else:
+    path = path[1:-1]
     monster = home
     for nxt in path:
         monster=nxt
