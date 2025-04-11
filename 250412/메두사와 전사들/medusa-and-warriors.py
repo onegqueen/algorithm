@@ -155,8 +155,8 @@ def get_hide(pos,target,vis):
         start =(target[0]+x,target[1]+y)
         while start[0]>=0 and start[0]<N:
             for i in range(start[1],start[1]+l):
-                if i>=0 and i<N and vis[start[0]][start[1]]:
-                    vis[start[0]][start[1]] = False
+                if i>=0 and i<N and vis[start[0]][i]:
+                    vis[start[0]][i] = False
                     res+=1
 
             start = (start[0]+x,start[1]+y)
@@ -168,8 +168,8 @@ def get_hide(pos,target,vis):
         start =(target[0]+x,target[1]+y)
         while start[0]>=0 and start[0]<N:
             for i in range(start[1],start[1]+l):
-                if i>=0 and i<N and vis[start[0]][start[1]]:
-                    vis[start[0]][start[1]] = False
+                if i>=0 and i<N and vis[start[0]][i]:
+                    vis[start[0]][i] = False
                     res+=1
             start = (start[0]+x,start[1]+y)
             l+=1
@@ -179,8 +179,8 @@ def get_hide(pos,target,vis):
         start =(target[0]+x,target[1]+y)
         while start[0]>=0 and start[0]<N:
             for i in range(start[1],start[1]-l,-1):
-                if i>=0 and i<N and vis[start[0]][start[1]]:
-                    vis[start[0]][start[1]] = False
+                if i>=0 and i<N and vis[start[0]][i]:
+                    vis[start[0]][i] = False
                     res+=1
             start = (start[0]+x,start[1]+y)
             l+=1
@@ -190,8 +190,8 @@ def get_hide(pos,target,vis):
         start =(target[0]+x,target[1]+y)
         while start[0]>=0 and start[0]<N:
             for i in range(start[1],start[1]-l,-1):
-                if i>=0 and i<N and vis[start[0]][start[1]]:
-                    vis[start[0]][start[1]] = False
+                if i>=0 and i<N and vis[start[0]][i]:
+                    vis[start[0]][i] = False
                     res+=1
             start = (start[0]+x,start[1]+y)
             l+=1
@@ -203,11 +203,10 @@ path = get_path(home)[1:-1]
 
 for i in range(N):
     for j in range(N):
+        if board[i][j]==1:
+            board[i][j]=0
         if (i,j) in fight:
-            if board[i][j] == 1:
-                board[i][j] = -1
-            else:
-                board[i][j] = board[i][j]-1
+            board[i][j] = board[i][j]-1
     
 
 
