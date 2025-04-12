@@ -200,7 +200,7 @@ def get_monster_sight(pos,d,is_test):
                     monster_sight[i][now[1]] = True
             now = (now[0]-1,now[1]+1)
             l+=2
-    
+
     #전사별 시야 조정
     for i in range(N):
         for j in range(N):
@@ -224,6 +224,7 @@ def get_best_sight(pos):
     global sight
     res = 0
     best_d = -1
+    
     for i in range(4):
         tmp = get_monster_sight(pos,i,True)
         if tmp > res:
@@ -311,18 +312,19 @@ else:
         for i in range(N):
             for j in range(N):
                 if board[i][j]>0 and not sight[i][j]:
-                    moved.append([(i,j),(move_warrier((i,j),nxt))])
+                    moved.append([(i,j),(move_warrier((i,j),nxt)),board[i][j]])
         
         for w in moved:
             past = w[0]
             now = w[1]
+            cnt = w[2]
 
-            cnt = board[past[0]][past[1]]
             board[now[0]][now[1]]+=cnt
             board[past[0]][past[1]]-=cnt
 
             dis+=(get_distance(past,now)*cnt)
-            
+        
+
         if board[nxt[0]][nxt[1]] > 0:
             attack += board[nxt[0]][nxt[1]]
             board[nxt[0]][nxt[1]] = 0
