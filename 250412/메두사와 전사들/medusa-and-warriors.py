@@ -1,323 +1,303 @@
 from collections import deque
 
-
 moves = [[-1,0],[1,0],[0,-1],[0,1]]
-dir_8 = [[-1,0],[1,0],[0,-1],[0,1],[-1,1],[1,1],[1,-1],[-1,-1]]
 
 N,M = map(int,input().split())
-home_r,home_c,park_r,park_c = map(int,input().split())
 
-home = (home_r,home_c)
-park = (park_r,park_c)
+sr,sc,er,ec = map(int,input().split())
+home = (sr,sc)
+park = (er,ec)
+tmp = list(list(map(int,input().split())))
 
-tmp = list(map(int,input().split()))
-fight = []
-for i in range(0,M*2-1,2):
-    fight.append((tmp[i],tmp[i+1]))
+warrier = []
+for i in range(0,M*2,2):
+    warrier.append((tmp[i],tmp[i+1]))
 
-board = []
+town = []
 for i in range(N):
-    board.append(list(map(int,input().split())))
-            
+    town.append(list(map(int,input().split())))
 
-path = []
-def get_path(start):
-    visited = [[1e9 for i in range(N)]for j in range(N)]
+
+def get_path():
+    visited = [[False for i in range(N)]for j in range(N)]
+
+    start = home
     dq = deque()
     dq.append((start,[start]))
-    visited[start[0]][start[1]]=0
-    res = 1e9
 
     while dq:
         now = dq.popleft()
-        dis = len(now[1])
-        visited[now[0][0]][now[0][1]]=dis
-        
+
+        node = now[0]
+        path = now[1]
+
+        if node == park:
+            return path
+
         for move in moves:
-            x = now[0][0]+move[0]
-            y = now[0][1]+move[1]
+            x = node[0]+move[0]
+            y = node[1]+move[1]
 
-            if dis<res and (x,y)==park:
-                res = dis
-                return now[1]+[(x,y)]
-
-            if x<0 or x>=N or y<0 or y>=N or board[x][y]==1 or visited[x][y]<dis:
+            if x<0 or x>=N or y<0 or y>=N or visited[x][y] or town[x][y]==1:
                 continue
             
-            dq.append(((x,y),now[1]+[(x,y)]))
+            visited[x][y]=True
+            dq.append(((x,y),path+[(x,y)]))
     
     return []
 
-def get_visible(d,start):
-    vis = [[False for i in range(N)]for j in range(N)]
-    x,y = 0,0
-    l = 3
+def where(pos,target):
+    if pos[1]==target[1] and pos[0]>target[0] : return 0 #상
+    elif pos[1]==target[1] and pos[0]<target[0] :return 1 #하
+    elif pos[0]==target[0] and pos[1]>target[1] : return 2 #좌
+    elif pos[0]==target[0] and pos[1]<target[1] : return 3 #우
+    elif pos[0]>target[0] and pos[1]<target[1] : return 4 #북동
+    elif pos[0]<target[0] and pos[1]<target[1] : return 5 #남동
+    elif pos[0]<target[0] and pos[1]>target[1] : return 6 #남서
+    else : return 7 #북서
 
-    if d == 0 :
-        x,y = -1,-1
-        line = start[1]
-
+def get_warrier_sight(m,w,sgt):
+    d = where(m,w)
+    if d == 0:
+        for i in range(w[0]-1,-1,-1):
+            sgt[i][w[1]] = False
     elif d == 1:
-        x,y = 1,-1
-        line = start[1]
+        for i in range(w[0]+1,N):
+            sgt[i][w[1]] = False
+    elif d == 2:
+        for i in range(w[1]-1,-1,-1):
+            sgt[w[0]][i] = False
+    elif d == 3:
+        for i in range(w[1]+1,N):
+            sgt[w[0]][i] = False
+    elif d == 4:
+        now = (w[0]-1,w[1])
+        l = 2
+        while now[0]>=0:
+            for i in range(now[1],now[1]+l):
+                if i>=0 and i<N:
+                    sgt[now[0]][i] = False
+            now = (now[0]-1,now[1])
+            l+=1
+    elif d == 5:
+        now = (w[0]+1,w[1])
+        l = 2
+        while now[0]<N:
+            for i in range(now[1],now[1]+l):
+                if i>=0 and i<N:
+                    sgt[now[0]][i] = False
+            now = (now[0]+1,now[1])
+            l+=1
+    elif d == 6:
+        now = (w[0]+1,w[1])
+        l = 2
+        while now[0]<N:
+            for i in range(now[1],now[1]-l,-1):
+                if i>=0 and i<N:
+                    sgt[now[0]][i] = False
+            now = (now[0]+1,now[1])
+            l+=1
+    elif d == 7:
+        now = (w[0]-1,w[1])
+        l = 2
+        while now[0]>=0:
+            for i in range(now[1],now[1]-l,-1):
+                if i>=0 and i<N:
+                    sgt[now[0]][i] = False
+            now = (now[0]-1,now[1])
+            l+=1
+        
+    return sgt
+
+def get_monster_sight(pos,d,is_test):
+    monster_sight = [[False for i in range(N)]for j in range(N)]
+
+    ## 초기 메두사 시야 조정
+    if d == 0:
+        now = (pos[0]-1,pos[1]-1)
+        l = 3
+        while now[0]>=0:
+            for i in range(now[1],now[1]+l):
+                if i>=0 and i<N:
+                    monster_sight[now[0]][i] = True
+            now = (now[0]-1,now[1]-1)
+            l+=2
+    
+    elif d == 1:
+        now = (pos[0]+1,pos[1]-1)
+        l = 3
+        while now[0]<N:
+            for i in range(now[1],now[1]+l):
+                if i>=0 and i<N:
+                    monster_sight[now[0]][i] = True
+            now = (now[0]+1,now[1]-1)
+            l+=2
     
     elif d == 2:
-        x,y = -1,-1
+        now = (pos[0]-1,pos[1]-1)
+        l = 3
+        while now[1]>=0:
+            for i in range(now[0],now[0]+l):
+                if i>=0 and i<N:
+                    monster_sight[i][now[1]] = True
+            now = (now[0]-1,now[1]-1)
+            l+=2
 
     elif d == 3:
-        x,y = -1,+1
-        
-    start = (start[0]+x,start[1]+y)
-    if d == 0 or d == 1:
-        while start[0]>=0 and start[0]<N:
-                for i in range(start[1],start[1]+l):
-                    if i>=0 and i<N:
-                        vis[start[0]][i] = True
-                start = (start[0]+x,start[1]+y)
-                l+=2
-    else:
-        while start[1]>=0 and start[1]<N:
-                for i in range(start[0],start[0]+l):
-                    if i>=0 and i<N:
-                        vis[i][start[1]] = True
-                start = (start[0]+x,start[1]+y)
-                l+=2
-
-    return vis
-
-def where(pos,target):
-    n = (pos[0]-1,pos[1])
-    s = (pos[0]+1,pos[1])
-    w = (pos[0],pos[1]-1)
-    e = (pos[0],pos[1]+1)
-
-    if target[1]==n[1] and target[0]<=n[0] : return 0
-    elif target[1]==s[1] and target[0]>=s[0] : return 1
-    elif target[0]==w[0] and target[1]<=w[1]: return 2
-    elif target[0]==e[0] and target[1]>=e[1] : return 3
-    elif target[0]<e[0] and target[1]>n[1] : return 4
-    elif target[0]>e[0] and target[1]>s[1] : return 5
-    elif target[0]>w[0] and target[1]<s[1] : return 6
-    elif target[0]<w[0] and target[1]<n[1] :return 7
-
-def get_hide(pos,target,vis):
+        now = (pos[0]-1,pos[1]+1)
+        l = 3
+        while now[1]<N:
+            for i in range(now[0],now[0]+l):
+                if i>=0 and i<N:
+                    monster_sight[i][now[1]] = True
+            now = (now[0]-1,now[1]+1)
+            l+=2
+    
+    #전사별 시야 조정
+    for i in range(N):
+        for j in range(N):
+            if board[i][j]>0 and monster_sight[i][j]:
+                get_warrier_sight(pos,(i,j),monster_sight)
+    
+    #돌이된 전사 수
     res = 0
-    w = where(pos,target)
-    x,y = 0,0
+    for i in range(N):
+        for j in range(N):
+            if board[i][j]>0 and monster_sight[i][j]:
+                res+=abs(board[i][j])
 
-    start = target
-    if w == 0 :
-        x,y = -1,0
-        l = 1
-        start = (target[0]+x,target[1]+y)
-        while start[0]>=0:
-            if vis[start[0]][start[1]]:
-                vis[start[0]][start[1]] = False
-                res+=1
-            start = (start[0]+x,start[1]+y)
-            
-    elif w == 1:
-        x,y = 1,0
-        l = 1
-        start= (target[0]+x,target[1]+y)
-        while start[0]<N:
-            if vis[start[0]][start[1]]:
-                vis[start[0]][start[1]] = False
-                res+=1
-
-            start = (start[0]+x,start[1]+y)
-
-    elif w == 2:
-        x,y = 0,-1
-        l = 1
-        start= (target[0]+x,target[1]+y)
-        while start[1]>=0:
-            if vis[start[0]][start[1]]:
-                vis[start[0]][start[1]] = False
-                res+=1
-
-            start = (start[0]+x,start[1]+y)
-
-    elif w == 3:
-        x,y = 0,1
-        l = 1
-        start =(target[0]+x,target[1]+y)
-        while start[1]<N:
-            if vis[start[0]][start[1]]:
-                vis[start[0]][start[1]] = False
-                res+=1
-
-            start = (start[0]+x,start[1]+y)
-
-    elif w == 4:
-        x,y = -1,0
-        l = 2
-        start =(target[0]+x,target[1]+y)
-        while start[0]>=0 and start[0]<N:
-            for i in range(start[1],start[1]+l):
-                if i>=0 and i<N and vis[start[0]][i]:
-                    vis[start[0]][i] = False
-                    res+=1
-
-            start = (start[0]+x,start[1]+y)
-            l+=1
-
-    elif w == 5:
-        x,y = 1,0
-        l = 2
-        start =(target[0]+x,target[1]+y)
-        while start[0]>=0 and start[0]<N:
-            for i in range(start[1],start[1]+l):
-                if i>=0 and i<N and vis[start[0]][i]:
-                    vis[start[0]][i] = False
-                    res+=1
-            start = (start[0]+x,start[1]+y)
-            l+=1
-    elif w == 6:
-        x,y = 1,0
-        l = 2
-        start =(target[0]+x,target[1]+y)
-        while start[0]>=0 and start[0]<N:
-            for i in range(start[1],start[1]-l,-1):
-                if i>=0 and i<N and vis[start[0]][i]:
-                    vis[start[0]][i] = False
-                    res+=1
-            start = (start[0]+x,start[1]+y)
-            l+=1
-    elif w == 7:
-        x,y = -1,0
-        l = 2
-        start =(target[0]+x,target[1]+y)
-        while start[0]>=0 and start[0]<N:
-            for i in range(start[1],start[1]-l,-1):
-                if i>=0 and i<N and vis[start[0]][i]:
-                    vis[start[0]][i] = False
-                    res+=1
-            start = (start[0]+x,start[1]+y)
-            l+=1
+    if is_test:
+        return res
     
+    else:
+        return monster_sight
+
+def get_best_sight(pos):
+    global sight
+    res = 0
+    best_d = -1
+    for i in range(4):
+        tmp = get_monster_sight(pos,i,True)
+        if tmp > res:
+            res = tmp
+            best_d = i
+
+    #최적시야 조정, 돌이된 전사 수 반환
+    sight = get_monster_sight(pos,best_d,False)
     return res
+
+def move_warrier(start,pos):
+    global sight
+
+    now = start
+    for move in moves:
+        x = now[0]+move[0]
+        y = now[1]+move[1]
+
+        if x<0 or y<0 or x>=N or y>=N or sight[x][y]:
+            continue
+        
+        #가까워진 경우만 변경
+        if get_distance((x,y),pos) < get_distance(now,pos):
+            now = (x,y)
+            break
     
+    for move in moves[2:]+moves[:2]:
+        x = now[0]+move[0]
+        y = now[1]+move[1]
+
+        if x<0 or y<0 or x>=N or y>=N or sight[x][y]:
+            continue
+        
+        #가까워진 경우만 변경
+        if get_distance((x,y),pos) < get_distance(now,pos):
+            now = (x,y)
+            break
     
-path = get_path(home)
+    #최종위치 반환
+    return now
+    
 
-for i in range(N):
-    for j in range(N):
-        if board[i][j]==1:
-            board[i][j]=0
-        if (i,j) in fight:
-            board[i][j] = board[i][j]-1
- 
+def set_warrier():
+    global board
+    for w in warrier:
+        board[w[0]][w[1]]+=1
 
+def get_distance(a,b):
+    return abs(a[0]-b[0])+abs(a[1]-b[1])
 
-if not path :
+path = get_path()
+if len(path)==0:
     print(-1)
 
 else:
-    path = path[1:-1]
-    monster = home
+    path=path[1:]
+    board = [[0 for i in range(N)] for j in range(N)]
+    set_warrier()
+
+    sight = [[False for i in range(N)]for j in range(N)]
     for nxt in path:
-        monster=nxt
-        stone = 0
-        dis = 0
-        attack = 0
-        # print("start",monster)
-        # for a in range(N):
-        #     print(board[a])
-
-        if board[nxt[0]][nxt[1]] < 0:
-            board[nxt[0]][nxt[1]]-=board[nxt[0]][nxt[1]]
-
-        hide_cnt = 0
-        visible = [[False for i in range(N)]for j in range(N)]
-        for i in range(4):
-            vis = get_visible(i,monster)
-            res = 0
-            for f in fight:
-                if vis[f[0]][f[1]]:
-                    get_hide(monster,f,vis)
-
-            for x in range(N):
-                for y in range(N):
-                    if board[x][y]<0 and vis[x][y]:
-                        res+=abs(board[x][y])
-            
-            if res>hide_cnt:
-                hide_cnt=res
-                for x in range(N):
-                    for y in range(N):
-                        visible[x][y]=vis[x][y]
+        # print("start:",nxt)
+        # for i in range(N):
+        #     print(board[i])
+        # 도착한 곳이 공원
+        if nxt == park:
+            print(0)
+            break
         
-        # print("hide",hide_cnt)
-        # for a in range(N):
-        #     print(board[a])
-        # for a in range(N):
-        #     print(visible[a])
+        #도착한 곳에 전사가 있다면 죽임
+        if board[nxt[0]][nxt[1]] > 0:
+            board[nxt[0]][nxt[1]] = 0
+        
+        #시야 및 돌이된 전사 수 구하기
+        stone = get_best_sight(nxt)
 
-        fight = []
-        tmp = []  
-        for x in range(N):
-            for y in range(N):
-                if visible[x][y] and board[x][y]<0:
-                    stone+=abs(board[x][y])
-                    fight.append((x,y))
-                    continue
+        # print("sight")
+        # for i in range(N):
+        #     print(sight[i])
+
+        #전사 움직이고 움직인 거리 구하기
+        attack = 0
+        dis = 0
+        moved = []
+        for i in range(N):
+            for j in range(N):
+                if board[i][j]>0 and not sight[i][j]:
+                    moved.append([(i,j),(move_warrier((i,j),nxt))])
+        
+        for w in moved:
+            past = w[0]
+            now = w[1]
+
+            cnt = board[past[0]][past[1]]
+            board[now[0]][now[1]]+=cnt
+            board[past[0]][past[1]]-=cnt
+
+            dis+=(get_distance(past,now)*cnt)
+            
+        if board[nxt[0]][nxt[1]] > 0:
+            attack += board[nxt[0]][nxt[1]]
+            board[nxt[0]][nxt[1]] = 0
+        
+        # print("moved")
+        # for i in range(N):
+        #     print(board[i])
+        
+        print(dis,stone,attack)
+            
+    
 
     
-                elif board[x][y]<0:
-                    nxt_x = x
-                    nxt_y = y
-                    now_d = abs(monster[0]-x)+abs(monster[1]-y)
-                    for m in moves:
-                        xm = x+m[0]
-                        ym = y+m[1]
 
-                        if xm >=0 and xm<N and ym>=0 and ym<N and not visible[xm][ym]:
-                            nxt_d = abs(monster[0]-xm)+abs(monster[1]-ym)
-                            if nxt_d<now_d:
-                                nxt_x = xm
-                                nxt_y = ym
-                                break
-                    
-                    res_x = nxt_x
-                    res_y = nxt_y
-                    now_d = abs(monster[0]-nxt_x)+abs(monster[1]-nxt_y)
-                    for m in moves[2:]+moves[:2]:
-                        xm = nxt_x+m[0]
-                        ym = nxt_y+m[1]
+    
 
-                        if xm >=0 and xm<N and ym>=0 and ym<N and not visible[xm][ym]:
-                            nxt_d = abs(monster[0]-xm)+abs(monster[1]-ym)
-                            if nxt_d<now_d:
-                                res_x = xm
-                                res_y = ym
-                                break
-                    
-                    #print(x,y,nxt_x,nxt_y,res_x,res_y)
-                    if (res_x,res_y) == monster:
-                        dis = dis + ((abs(x-res_x)+abs(y-res_y))*abs(board[x][y]))
-                        attack+=1
-                        board[x][y]-=board[x][y]
-                    
-                    else:
-                        dis = dis + ((abs(x-res_x)+abs(y-res_y))*abs(board[x][y]))
-                        fight.append((res_x,res_y))
-                        tmp.append([x,y,res_x,res_y])
-        for t in tmp:
-            if(t[0],t[1])==(t[2],t[3]):continue
-            board[t[2]][t[3]] += board[t[0]][t[1]]
-            board[t[0]][t[1]]-=board[t[0]][t[1]]
 
-        # print("end")
-        # for a in range(N):
-        #     print(board[a])
-        # for a in range(N):
-        #     print(visible[a])
-        print(dis,stone,attack)
-        
+    
 
-                        
-    print(0)                        
+    
+    
 
-#거리,돌,전사
+
+
+
 
