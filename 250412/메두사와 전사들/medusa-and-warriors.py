@@ -46,66 +46,114 @@ def get_path():
     
     return []
 
-def where(pos,target):
+def where(pos,target):    
     if pos[1]==target[1] and pos[0]>target[0] : return 0 #상
-    elif pos[1]==target[1] and pos[0]<target[0] :return 1 #하
-    elif pos[0]==target[0] and pos[1]>target[1] : return 2 #좌
-    elif pos[0]==target[0] and pos[1]<target[1] : return 3 #우
-    elif pos[0]>target[0] and pos[1]<target[1] : return 4 #북동
-    elif pos[0]<target[0] and pos[1]<target[1] : return 5 #남동
-    elif pos[0]<target[0] and pos[1]>target[1] : return 6 #남서
+    elif pos[1]==target[1] and pos[0]<target[0] :return 1#하
+    elif pos[0]==target[0] and pos[1]>target[1] : return 2#좌
+    elif pos[0]==target[0] and pos[1]<target[1] : return 3#우
+    elif pos[0]>target[0] and pos[1]<target[1] : return 4#북동
+    elif pos[0]<target[0] and pos[1]<target[1] : return 5#남동
+    elif pos[0]<target[0] and pos[1]>target[1] : return 6#남서
     else : return 7 #북서
 
-def get_warrier_sight(m,w,sgt):
-    d = where(m,w)
+def get_warrier_sight(m,w,sgt,d):
+    w_d = where(m,w)
+
+    # 메두사 시야 (상)
     if d == 0:
-        for i in range(w[0]-1,-1,-1):
-            sgt[i][w[1]] = False
-    elif d == 1:
-        for i in range(w[0]+1,N):
-            sgt[i][w[1]] = False
-    elif d == 2:
-        for i in range(w[1]-1,-1,-1):
-            sgt[w[0]][i] = False
-    elif d == 3:
-        for i in range(w[1]+1,N):
-            sgt[w[0]][i] = False
-    elif d == 4:
-        now = (w[0]-1,w[1])
-        l = 2
-        while now[0]>=0:
-            for i in range(now[1],now[1]+l):
-                if i>=0 and i<N:
-                    sgt[now[0]][i] = False
-            now = (now[0]-1,now[1])
-            l+=1
-    elif d == 5:
-        now = (w[0]+1,w[1])
-        l = 2
-        while now[0]<N:
-            for i in range(now[1],now[1]+l):
-                if i>=0 and i<N:
-                    sgt[now[0]][i] = False
-            now = (now[0]+1,now[1])
-            l+=1
-    elif d == 6:
-        now = (w[0]+1,w[1])
-        l = 2
-        while now[0]<N:
-            for i in range(now[1],now[1]-l,-1):
-                if i>=0 and i<N:
-                    sgt[now[0]][i] = False
-            now = (now[0]+1,now[1])
-            l+=1
-    elif d == 7:
-        now = (w[0]-1,w[1])
-        l = 2
-        while now[0]>=0:
-            for i in range(now[1],now[1]-l,-1):
-                if i>=0 and i<N:
-                    sgt[now[0]][i] = False
-            now = (now[0]-1,now[1])
-            l+=1
+        if w_d ==0:
+            for i in range(w[0]-1,-1,-1):
+                sgt[i][w[1]] = False
+        elif w_d == 7:
+            now = (w[0]-1,w[1])
+            l = 2
+            while now[0]>=0:
+                for i in range(now[1],now[1]-l,-1):
+                    if i>=0 and i<N:
+                        sgt[now[0]][i] = False
+                now = (now[0]-1,now[1])
+                l+=1
+        elif w_d == 4:
+            now = (w[0]-1,w[1])
+            l = 2
+            while now[0]>=0:
+                for i in range(now[1],now[1]+l):
+                    if i>=0 and i<N:
+                        sgt[now[0]][i] = False
+                now = (now[0]-1,now[1])
+                l+=1
+    #메두사 시야(하)
+    elif d == 1 :
+        if w_d ==1:
+            for i in range(w[0]+1,N):
+                sgt[i][w[1]] = False
+        elif w_d == 6:
+            now = (w[0]+1,w[1])
+            l = 2
+            while now[0]<N:
+                for i in range(now[1],now[1]-l,-1):
+                    if i>=0 and i<N:
+                        sgt[now[0]][i] = False
+                now = (now[0]+1,now[1])
+                l+=1
+        elif w_d == 5:
+            now = (w[0]+1,w[1])
+            l = 2
+            while now[0]<N:
+                for i in range(now[1],now[1]+l):
+                    if i>=0 and i<N:
+                        sgt[now[0]][i] = False
+                now = (now[0]+1,now[1])
+                l+=1
+    
+    #메두사 시야(좌)
+    elif d == 2 :
+        if w_d ==2:
+            for i in range(w[1]-1,-1,-1):
+                sgt[w[0]][i] = False
+        elif w_d == 7:
+            now = (w[0],w[1]-1)
+            l = 2
+            while now[1]>=0:
+                for i in range(now[0],now[0]-l,-1):
+                    if i>=0 and i<N:
+                        sgt[i][now[1]] = False
+                now = (now[0],now[1]-1)
+                l+=1
+        elif w_d == 6:
+            now = (w[0],w[1]-1)
+            l = 2
+            while now[1]>=0:
+                for i in range(now[0],now[0]+l):
+                    if i>=0 and i<N:
+                        sgt[i][now[1]] = False
+                now = (now[0],now[1]-1)
+                l+=1
+
+    #메두사 시야(우)
+    elif d == 3 :
+        if w_d ==3:
+            for i in range(w[1]+1,N):
+                sgt[w[0]][i] = False
+        elif w_d == 4:
+            now = (w[0],w[1]+1)
+            l = 2
+            while now[1]<N:
+                for i in range(now[0],now[0]-l,-1):
+                    if i>=0 and i<N:
+                        sgt[i][now[1]] = False
+                now = (now[0],now[1]+1)
+                l+=1
+        elif w_d == 5:
+            now = (w[0],w[1]+1)
+            l = 2
+            while now[1]<N:
+                for i in range(now[0],now[0]+l):
+                    if i>=0 and i<N:
+                        sgt[i][now[1]] = False
+                now = (now[0],now[1]+1)
+                l+=1
+    
         
     return sgt
 
@@ -157,7 +205,7 @@ def get_monster_sight(pos,d,is_test):
     for i in range(N):
         for j in range(N):
             if board[i][j]>0 and monster_sight[i][j]:
-                get_warrier_sight(pos,(i,j),monster_sight)
+                get_warrier_sight(pos,(i,j),monster_sight,d)
     
     #돌이된 전사 수
     res = 0
