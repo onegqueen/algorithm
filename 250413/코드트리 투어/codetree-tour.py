@@ -47,7 +47,24 @@ def set_advantages():
     
     return 0
 
-best_product = INF
+def get_best_product():
+    global advantages
+
+    res = INF
+    max_adv = -1
+    for key,value in advantages.items():
+        if value > max_adv :
+            max_adv = value
+            res = key
+        elif value == max_adv and res > key:
+            max_adv = value
+            res = key
+    
+    if max_adv < 0 or res == INF:
+        return -1
+    else:
+        return res
+
 advantages = {}
 advantages[INF] = -1
 for _ in range(Q):
@@ -64,33 +81,20 @@ for _ in range(Q):
         dests[ID] = dest
         advantages[ID] = revenues[ID] - cost[dests[ID]]
 
-        if advantages[ID] > advantages[best_product] :
-            best_product = ID
-        if advantages[ID] == advantages[best_product] and best_product > ID:
-            best_product = ID
-
     
     elif cmd[0] == "300":
         ID = int(cmd[1])
         revenues[ID] = -1
         dests[ID] = -1
-        advantages[ID] = -1
-
-        if ID == best_product:
-            best_product = max(advantages,key=advantages.get)
-    
+        advantages[ID] = -1    
     
     elif cmd[0] == "400":
-        if best_product==INF or advantages[best_product]==-1:
-            print(-1)
-        else:
-            print(best_product)
-        
+        best_product = get_best_product()
+        print(best_product)
 
         revenues[best_product]=-1
         dests[best_product]=-1
         advantages[best_product]=-1
-        best_product = max(advantages,key=advantages.get)
 
     elif cmd[0] =="500":
         cost = dijkstra(int(cmd[1]))
@@ -99,7 +103,6 @@ for _ in range(Q):
         advantages = {}
         advantages[INF] = -1
         set_advantages()
-        best_product = max(advantages,key=advantages.get)
 
 
 
