@@ -43,9 +43,9 @@ def sell_best_product():
 
     max_adv = -1
     for key,value in revenues.items():
-        if value == -1:
+        if value == -1 or cost[dests[key]]==INF:
             continue
-            
+
         adv = value - cost[dests[key]]
 
         if adv > max_adv :
