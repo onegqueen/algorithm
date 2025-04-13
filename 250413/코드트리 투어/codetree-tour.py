@@ -37,8 +37,7 @@ def construct(info):
     return dijkstra(0)
 
 def set_advantages():
-    global advantages,revenues
-    global best_product,max_adv
+    global advantages,revenues,cost,dests
 
     for key,value in revenues.items():
         if value == -1 or cost[dests[key]]==INF:
@@ -65,8 +64,10 @@ for _ in range(Q):
         dests[ID] = dest
         advantages[ID] = revenues[ID] - cost[dests[ID]]
 
-        if advantages[ID] >= advantages[best_product] :
-            best_product = min(ID,best_product)
+        if advantages[ID] > advantages[best_product] :
+            best_product = ID
+        if advantages[ID] == advantages[best_product] and best_product > ID:
+            best_product = ID
 
     
     elif cmd[0] == "300":
@@ -100,7 +101,5 @@ for _ in range(Q):
         set_advantages()
         best_product = max(advantages,key=advantages.get)
 
-    # print(cmd,best_product)
-    # print(advantages)
 
 
