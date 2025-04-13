@@ -15,6 +15,7 @@ def dijkstra(start):
     dis[start] = 0
 
     hq = []
+    heapq.heapify(hq)
     hq.append((0,start))
 
     while hq:
@@ -41,11 +42,16 @@ def sell_best_product():
     res = INF
 
     max_adv = -1
-    revenues = dict(sorted(revenues.items()))
     for key,value in revenues.items():
+        if value == -1:
+            continue
+            
         adv = value - cost[dests[key]]
 
         if adv > max_adv :
+            max_adv = adv
+            res = key
+        elif adv == max_adv and res > key:
             max_adv = adv
             res = key
     
