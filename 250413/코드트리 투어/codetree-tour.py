@@ -61,7 +61,7 @@ def get_best_product():
             res = key
     
     if max_adv < 0 or res == INF:
-        return -1
+        return INF
     else:
         return res
 
@@ -98,7 +98,10 @@ for _ in range(Q):
             best_product = get_best_product()
     
     elif cmd[0] == "400":
-        print(best_product)
+        if best_product == INF:
+            print(-1)
+        else:
+            print(best_product)
 
         revenues[best_product]=-1
         dests[best_product]=-1
@@ -108,9 +111,9 @@ for _ in range(Q):
     elif cmd[0] =="500":
         cost = dijkstra(int(cmd[1]))
 
-        best_product = INF
         advantages = {}
         advantages[INF] = -1
+        best_product = INF
         set_advantages()
         best_product = get_best_product()
 
