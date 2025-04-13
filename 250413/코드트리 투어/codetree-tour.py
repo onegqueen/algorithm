@@ -36,33 +36,21 @@ def construct(info):
 
     return dijkstra(0)
 
-def sell_best_product():
-    global revenues
+def set_advantages():
+    global advantages,revenues
+    global best_product,max_adv
 
-    res = INF
-
-    max_adv = -1
     for key,value in revenues.items():
         if value == -1 or cost[dests[key]]==INF:
             continue
 
-        adv = value - cost[dests[key]]
-
-        if adv > max_adv :
-            max_adv = adv
-            res = key
-        elif adv == max_adv and res > key:
-            max_adv = adv
-            res = key
+        advantages[key] = value - cost[dests[key]]
     
-    if max_adv < 0 or res == INF:
-        return -1
-    else:
-        revenues[res]=-1
-        dests[res]=-1
-        return res
+    return 0
 
-
+best_product = INF
+advantages = {}
+advantages[INF] = -1
 for _ in range(Q):
     cmd = list(map(str,input().split()))
     if cmd[0] == "100":
@@ -75,16 +63,44 @@ for _ in range(Q):
         ID, revenue, dest = int(cmd[1]),int(cmd[2]),int(cmd[3])
         revenues[ID] = revenue
         dests[ID] = dest
+        advantages[ID] = revenues[ID] - cost[dests[ID]]
+
+        if advantages[ID] >= advantages[best_product] :
+            best_product = min(ID,best_product)
+
     
     elif cmd[0] == "300":
         ID = int(cmd[1])
         revenues[ID] = -1
         dests[ID] = -1
+        advantages[ID] = -1
+
+        if ID == best_product:
+            best_product = max(advantages,key=advantages.get)
+    
     
     elif cmd[0] == "400":
-        print(sell_best_product())
-    
+        if best_product==INF or advantages[best_product]==-1:
+            print(-1)
+        else:
+            print(best_product)
+        
+
+        revenues[best_product]=-1
+        dests[best_product]=-1
+        advantages[best_product]=-1
+        best_product = max(advantages,key=advantages.get)
+
     elif cmd[0] =="500":
         cost = dijkstra(int(cmd[1]))
+
+        best_product = INF
+        advantages = {}
+        advantages[INF] = -1
+        set_advantages()
+        best_product = max(advantages,key=advantages.get)
+
+    # print(cmd,best_product)
+    # print(advantages)
 
 
