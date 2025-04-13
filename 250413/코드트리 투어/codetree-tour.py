@@ -43,7 +43,6 @@ def sell_best_product():
     max_adv = -1
     for key,value in revenues.items():
         adv = value - cost[dests[key]]
-        #print(key,value,adv,max_adv)
 
         if adv > max_adv :
             max_adv = adv
@@ -75,14 +74,10 @@ for _ in range(Q):
     
     elif cmd[0] == "300":
         ID = int(cmd[1])
-        if ID in revenues :
-            revenues[ID] = -1
-            dests[ID] = -1
+        revenues[ID] = -1
+        dests[ID] = -1
     
     elif cmd[0] == "400":
-        # print (cost)
-        # print(revenues)
-        # print(dests)
         print(sell_best_product())
     
     elif cmd[0] =="500":
