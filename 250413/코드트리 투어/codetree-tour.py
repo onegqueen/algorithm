@@ -67,6 +67,7 @@ def get_best_product():
 
 advantages = {}
 advantages[INF] = -1
+best_product = -1
 for _ in range(Q):
     cmd = list(map(str,input().split()))
     if cmd[0] == "100":
@@ -86,10 +87,11 @@ for _ in range(Q):
         ID = int(cmd[1])
         revenues[ID] = -1
         dests[ID] = -1
-        advantages[ID] = -1    
+        advantages[ID] = -1
+
+        
     
     elif cmd[0] == "400":
-        best_product = get_best_product()
         print(best_product)
 
         revenues[best_product]=-1
@@ -103,6 +105,7 @@ for _ in range(Q):
         advantages = {}
         advantages[INF] = -1
         set_advantages()
+        best_product = get_best_product()
 
 
 
