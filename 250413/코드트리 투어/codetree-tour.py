@@ -67,7 +67,7 @@ def get_best_product():
 
 advantages = {}
 advantages[INF] = -1
-best_product = -1
+best_product = INF
 for _ in range(Q):
     cmd = list(map(str,input().split()))
     if cmd[0] == "100":
@@ -82,6 +82,11 @@ for _ in range(Q):
         dests[ID] = dest
         advantages[ID] = revenues[ID] - cost[dests[ID]]
 
+        if advantages[ID] > advantages[best_product]:
+            best_product = ID
+        elif advantages[ID] == advantages[best_product]:
+            best_product = min(best_product,ID)
+
     
     elif cmd[0] == "300":
         ID = int(cmd[1])
@@ -89,7 +94,8 @@ for _ in range(Q):
         dests[ID] = -1
         advantages[ID] = -1
 
-        
+        if ID == best_product: 
+            best_product = get_best_product()
     
     elif cmd[0] == "400":
         print(best_product)
@@ -97,6 +103,7 @@ for _ in range(Q):
         revenues[best_product]=-1
         dests[best_product]=-1
         advantages[best_product]=-1
+        best_product = get_best_product()
 
     elif cmd[0] =="500":
         cost = dijkstra(int(cmd[1]))
